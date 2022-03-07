@@ -1,0 +1,51 @@
+Antes de empezar:
+-Documentarse sobre la función read() y las variables estáticas.
+- Recomendación:
+  Crea tu propio 'main' y un archivo '.txt' para hacer pruebas;
+
+En el "gnl_utils.c" (mi caso) utilizaremos las siguientes funciones: 
+- strlen
+- strjoin
+- strdup
+- substr
+- strchr
+
+  Estas son las que YO utilicé, se puede hacer de muchas maneras, documentate.
+
+Crear la estática donde guardaremos datos.
+Crearemos una variable tipo char* (string) para devolverla al final.
+Importante crear "char *buff" para enviarsela al read(), en ella se guardará la string 
+del tamaño de BUFFER_SIZE, por lo tanto, será un malloc de BUFFER_SIZE + 1.
+
+CONTROL DE ERRORES
+Empezaremos con el control de errores comprobando si los datos recibidos (FD y BUFFER_SIZE)
+nos son útiles para trabajar, es decir, si el file descriptor tiene un valor de -1, o el 
+BUFFER_SIZE es menor que 1, el programa terminará.
+
+- malloc del buff.
+
+La variable "string" deberíamos inicializarla como un read() del archivo, pero solo nos devolvería
+una línea de tamaño del BUFFER_SIZE, como queremos que haga más cosas, crearemos una función 
+que lea el archivo. El prototipo podría ser el siguiente:
+
+---> char    *ft_read_function(int fd, char *buff, char *estática); <---
+
+Como el BUFFER_SIZE se lo enviamos al compilar, no necesitamos mandarselo a la función,
+le enviaremos el file descriptor y el buff que es lo que necesita para utilizar read().
+El read se encontrará dentro de un bucle. Teniendo en cuenta que lo que devuelve es el número
+de bytes que se han leído, y que en caso de error devolverá -1 debemos crear una variable tipo
+int o ssize_t (igual que size_t pero puede devolver '-1').
+Por lo tanto:
+- variable_de_leer = read(), si es -1 me devuelves 0, y si es 0 me sales del bucle
+  y me devuelves la estática como si no hubiera pasado nada. (return(estática) o break;).
+- como la variable_de_leer es el número de bytes que ha leído, y el buff es el lugar de memoria
+  donde se haguardado todo, la tratamos como una string y la variable_de_leer como el contador de
+  la misma, por lo tanto, buff[variable_de_leer] es igual a nulo('\0') para cerrar la string.
+
+En éste punto, tenemos una string del tamaño BUFFER_SIZE que podemos printear para ver lo que estamos
+haciendo.
+
+El siguiente paso consiste en usar "strjoin" con la estática y el buff, pero es posible que la primera
+esté vacia y no podemos trabajar con una variable que no tenga nada, por lo que utilizaremos "strdup" en
+ella en caso de estar vacia. Con un 'if(estática no tiene nada) estática = strdup("")', valdría. 
+
